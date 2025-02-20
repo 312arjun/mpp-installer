@@ -1,5 +1,9 @@
 #!/bin/bash
-# Script to create an MPP Installer Debian package with robust lock handling
+# Script to create an MPP Installer Debian package with versioned filename
+
+# Set version and architecture information
+VERSION="1.0"
+ARCH="linux-amd64"
 
 # Create package directory structure
 mkdir -p mpp-installer/DEBIAN
@@ -10,20 +14,20 @@ mkdir -p mpp-installer/usr/share/mpp-installer
 # Create control file
 cat > mpp-installer/DEBIAN/control << EOF
 Package: mpp-installer
-Version: 1.0
+Version: ${VERSION}
 Section: net
 Priority: optional
 Architecture: all
 Depends: bash
-Maintainer: Arjun <arjun.s01@simplify3x.com>
-Description: MPP Installer and Configuration
+Maintainer: Arjun Soundarajan <arjun.s01@simplify3x.com>
+Description: myphantompath Installer and Configuration
  Installs WireGuard, generates keys, and configures the interface with systemd service.
 EOF
 
 # Create systemd service file
 cat > mpp-installer/etc/systemd/system/mpp.service << EOF
 [Unit]
-Description=MPP WireGuard VPN Service
+Description=MPP Secure Communication Service
 After=network-online.target
 Wants=network-online.target
 
@@ -53,28 +57,28 @@ case "\$1" in
   start)
     check_wireguard
     systemctl start mpp
-    echo "MPP VPN started"
+    echo "myphantompath service started"
     ;;
   stop)
     systemctl stop mpp
-    echo "MPP VPN stopped"
+    echo "myphantompath service stopped"
     ;;
   status)
     systemctl status mpp
     ;;
   enable)
     systemctl enable mpp
-    echo "MPP VPN enabled at boot"
+    echo "myphantompath service enabled at boot"
     ;;
   disable)
     systemctl disable mpp
-    echo "MPP VPN disabled at boot"
+    echo "myphantompath service disabled at boot"
     ;;
   setup)
     # Ensure WireGuard is installed
     if ! command -v wg &> /dev/null; then
       echo "WireGuard is not installed. Installing now..."
-      sudo apt-get update && sudo apt-get install -y wireguard wireguard-tools
+      sudo apt-get install -y wireguard wireguard-tools
     fi
     
     # Generate keys if they don't exist
@@ -111,7 +115,7 @@ EOL
     # Setup service
     systemctl daemon-reload
     systemctl enable mpp.service
-    echo "MPP VPN setup complete and enabled at boot."
+    echo "myphantompath service setup complete and enabled at boot."
     ;;
   *)
     echo "Usage: mpp {start|stop|status|enable|disable|setup}"
@@ -206,16 +210,16 @@ setup_service() {
 }
 
 # Main installation process
-echo "Starting MPP WireGuard setup..."
+echo "Starting myphantompath service setup..."
 install_wireguard
 setup_wireguard
 setup_service
 
 echo "================================================================"
-echo "MPP installation complete!"
-echo "The VPN service has been configured and enabled at boot."
+echo "myphantompath installation complete!"
+echo "The myphantompath service has been configured and enabled at boot."
 echo ""
-echo "To control the VPN connection, use: mpp {start|stop|status|enable|disable|setup}"
+echo "To control the connection, use: mpp {start|stop|status|enable|disable|setup}"
 echo "================================================================"
 
 exit 0
@@ -229,7 +233,7 @@ cat > mpp-installer/DEBIAN/postinst << EOF
 set -e
 
 # Display welcome message
-echo "MPP Installer has been installed."
+echo "myphantompath Installer v${VERSION} has been installed."
 echo "Starting setup process (or you can run it later with 'sudo mpp setup')..."
 
 # Try to run setup script immediately or inform user how to run it later
@@ -258,7 +262,7 @@ if [ -f /etc/systemd/system/mpp.service ]; then
   systemctl daemon-reload
 fi
 
-echo "MPP VPN service has been removed."
+echo "MPP VPN service v${VERSION} has been removed."
 exit 0
 EOF
 
@@ -266,6 +270,7 @@ EOF
 chmod 755 mpp-installer/DEBIAN/postinst
 chmod 755 mpp-installer/DEBIAN/postrm
 
-# Build the package
+# Build the package with custom filename
 dpkg-deb --build mpp-installer
-echo "Package built successfully: mpp-installer.deb"
+mv mpp-installer.deb mpp-installer-${VERSION}-${ARCH}.deb
+echo "Package built successfully: mpp-installer-${VERSION}-${ARCH}.deb"
