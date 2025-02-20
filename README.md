@@ -27,7 +27,7 @@ This package automates the installation and configuration of WireGuard VPN on yo
 
 4. **Verify package creation**
    
-   You should see a new file named `mpp-installer.deb` in the current directory.
+   You should see a new file named `mpp-installer-version-arch.deb` in the current directory.
 
 ### What the Build Script Creates
 
@@ -44,8 +44,10 @@ The build script generates a Debian package (.deb) that includes:
 
 1. **Install the Debian package**
    ```bash
-   sudo dpkg -i mpp-installer.deb
+   sudo dpkg -i mpp-installer-version-arch.deb
    ```
+
+   Check for the version and architecture of the build file
 
 2. **Handling installation outcomes**
    
