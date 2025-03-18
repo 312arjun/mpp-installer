@@ -1,6 +1,6 @@
 # MPP Secure Tunnel Installer
 
-This package automates the installation and configuration of WireGuard VPN on your Linux system. The installer creates a convenient command-line utility and systemd service for easy management of your secure connection.
+This package automates the installation and configuration of myphantompath SDK package for Linux systems. The installer creates a convenient command-line utility and systemd service for easy management for a secure connection.
 
 ## Part 1: Building the Package
 
